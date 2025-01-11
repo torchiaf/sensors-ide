@@ -1,0 +1,27 @@
+name: Publish sensors-ide
+
+on:
+  push:
+    tags:
+      - v*
+    branches:
+      - main
+
+jobs:
+  build-and-push-controller:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Run Build and Publish Docker image
+        id: controller
+        uses: ./.github/actions/docker-push
+        with:
+          registry: ghcr.io
+          tags: ghcr.io/${{ github.repository_owner }}/sensors-ide:${{ github.ref_name }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          file: Dockerfile
